@@ -2,10 +2,16 @@
 <html>
 <head>
   <title>Color Core 2</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
   <style>
     body {
       background-color: rgb(236,236,236);
       font-size: 16px;
+      font-family: Arial;
+    }
+
+    ul {
+      padding-left: 15px;
     }
 
     .display_none {
@@ -56,6 +62,44 @@
       font-size: 20px;
     }
 
+    .reset {
+      width: 200px;
+      height: 50px;
+      font-size:20px;
+    }
+
+    /* credit to Steve Wanderski for http://css3buttongenerator.com/ */
+    .btn {
+      background: #7fd977;
+      background-image: -webkit-linear-gradient(top, #7fd977, #49bd7f);
+      background-image: -moz-linear-gradient(top, #7fd977, #49bd7f);
+      background-image: -ms-linear-gradient(top, #7fd977, #49bd7f);
+      background-image: -o-linear-gradient(top, #7fd977, #49bd7f);
+      background-image: linear-gradient(to bottom, #7fd977, #49bd7f);
+      -webkit-border-radius: 28;
+      -moz-border-radius: 28;
+      border-radius: 28px;
+      text-shadow: 1px 1px 3px #666666;
+      -webkit-box-shadow: 0px 1px 3px #666666;
+      -moz-box-shadow: 0px 1px 3px #666666;
+      box-shadow: 0px 1px 3px #666666;
+      font-family: Arial;
+      color: #ffffff;
+      font-size: 20px;
+      padding: 10px 20px 10px 20px;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: #fa3c62;
+      background-image: -webkit-linear-gradient(top, #fa3c62, #d9346b);
+      background-image: -moz-linear-gradient(top, #fa3c62, #d9346b);
+      background-image: -ms-linear-gradient(top, #fa3c62, #d9346b);
+      background-image: -o-linear-gradient(top, #fa3c62, #d9346b);
+      background-image: linear-gradient(to bottom, #fa3c62, #d9346b);
+      text-decoration: none;
+    }
+
     .tile {
       display: inline-block;
       width: 100px;
@@ -66,27 +110,80 @@
 
     .tile.on {
       background-color: rgb(51, 191, 51);
+      animation-name: turnOn;
+      animation-duration: 0.3s;
     }
 
     .tile.off {
       background-color: rgb(216, 43, 43);
+      animation-name: turnOff;
+      animation-duration: 0.3s;
     }
 
     .tile.on.preview {
-      /*background-color: rgb(121, 193, 121);*/
       border-width: 5px;
       border-color: black;
     }
 
     .tile.off.preview {
-      /*background-color: rgb(214, 129, 129);*/
       border-width: 5px;
       border-color: black;
     }
 
-    .tile:hover {
-      border-width: 10px;
-      cursor: default;
+    @-webkit-keyframes turnOff {
+      0% {
+        background-color: rgb(51, 191, 51);
+      }
+      50% {
+        -ms-transform: rotate(5deg); /* IE 9 */
+        -webkit-transform: rotate(5deg); /* Safari */
+        transform: rotate(5deg); /* Standard syntax */
+      }
+      100% {
+        background-color: rgb(216, 43, 43);
+      }
+    }
+
+    @-webkit-keyframes turnOn {
+      0% {
+        background-color: rgb(216, 43, 43);
+      }
+      50% {
+        -ms-transform: rotate(5deg); /* IE 9 */
+        -webkit-transform: rotate(5deg); /* Safari */
+        transform: rotate(5deg); /* Standard syntax */
+      }
+      100% {
+        background-color: rgb(51, 191, 51);
+      }
+    }
+    
+    @keyframes turnOff {
+      0% {
+        background-color: rgb(51, 191, 51);
+      }
+      50% {
+        -ms-transform: rotate(5deg); /* IE 9 */
+        -webkit-transform: rotate(5deg); /* Safari */
+        transform: rotate(5deg); /* Standard syntax */
+      }
+      100% {
+        background-color: rgb(216, 43, 43);
+      }
+    }
+
+    @keyframes turnOn {
+      0% {
+        background-color: rgb(216, 43, 43);
+      }
+      50% {
+        -ms-transform: rotate(5deg); /* IE 9 */
+        -webkit-transform: rotate(5deg); /* Safari */
+        transform: rotate(5deg); /* Standard syntax */
+      }
+      100% {
+        background-color: rgb(51, 191, 51);
+      }
     }
 
     .colorblind .tile {
@@ -125,7 +222,7 @@
     }
   </style>
 </head>
-<body onload="init()">
+<body onload="startup()">
 
   <div id="app">
     <h1 class="centered">Color Core 2</h1>
@@ -144,7 +241,11 @@
         <p class="bold">How to Play:</p>
       </div>
       <div class="inline_block value">
-        <p>Click a tile to reverse its color. Beware, adjacent tiles will also change (this includes diagonals). Try to solve the puzzle in as few clicks as possible.</p>
+        <ul>
+          <li>Click a tile to reverse its color.</li>
+          <li>Adjacent tiles will also change (including diagonals).</li>
+          <li>Try to solve the puzzle in as few clicks as possible.</li>
+        </ul>
       </div>
     </div>
 
@@ -153,11 +254,9 @@
         <p class="bold">Options:</p>
       </div>
       <div class="inline_block value">
-        <p>
-          <span>Colorblind Mode</span>
-          <input id="colorblindCheckbox" type="checkbox"
-                 onClick="toggleColorBlind(this)"/>
-        </p>
+        <ul style="list-style: none; padding-left: 0px;">
+          <li><label>Colorblind Mode<input id="colorblindCheckbox" type="checkbox" onClick="toggleColorBlind(this)"/></label></li>
+        </ul>
       </div>
     </div>
 
@@ -173,6 +272,10 @@
       </div>
     </div>
 
+    <div class="centered" style="margin-bottom: 10px;">
+      <button class="btn reset" onClick="reset()">Reset Game</button>
+    </div>
+
     <div id="board"></div>
 
     <div id="winDialog" class="alert display_none">
@@ -181,14 +284,30 @@
           <h1>Color Core 2</h1>
           <h3>You win!</h3>
           <h3>You took <span id="winClicks">0</span> clicks to solve the puzzle.</h3>
-          <button class="playAgain" onClick="reset()">Play Again</button>
+          <button class="btn playAgain" onClick="reset()">Play Again</button>
         </div>
       </div>
     </div>
   </div>
 
+  <div class="centered">
+    <p>Developed by Andrew Delamar</p>
+  </div>
+
   <script type="text/javascript">
-    var game = {};
+    var game = {
+      colorblind : false,
+      width : 5,
+      height : 5
+    };
+
+    function startup() {
+      var isMobile = window.matchMedia("only screen and (max-width: 760px)");
+
+      game.isMobile = isMobile.matches;
+
+      init();
+    }
 
     function toggleColorBlind(checkbox) {
       game.colorblind = ! game.colorblind;
@@ -201,16 +320,26 @@
     }
 
     function reset() {
-      location.reload();
+      clearBoard();
+
+      init();
+
+      var winDialog = document.getElementById("winDialog");
+
+      if (! winDialog.classList.contains("display_none")) {
+        winDialog.classList.add("display_none");
+      }
+    }
+
+    function clearBoard() {
+      game.clicks = 0;
+      document.getElementById("clicks").innerHTML = 0;
+      document.getElementById("winClicks").innerHTML = 0;
+      document.getElementById("board").innerHTML = "";
     }
 
     function init() {
       game.grid = [];
-
-      game.colorblind = false;
-
-      game.width = 5;
-      game.height = 5;
 
       for (var j = 0; j < game.height; j++) {
         var row = [];
@@ -400,10 +529,13 @@
       button.classList.add('off');
       button.setAttribute("id", buildButtonId(x, y));
       button.setAttribute("onClick", "startIncrement(this)");
-      button.setAttribute("onmouseover", "tileHovered(this)");
-      button.setAttribute("onmouseleave", "tileUnhovered(this)");
       button.setAttribute("x", x);
       button.setAttribute("y", y);
+
+      if (! game.isMobile) {
+        button.setAttribute("onmouseover", "tileHovered(this)");
+        button.setAttribute("onmouseleave", "tileUnhovered(this)");
+      }
 
       return button;
     }
