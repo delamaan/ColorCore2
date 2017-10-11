@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Color Core 2</title>
+  <style>
+    body {
+      background-color: rgb(236,236,236);
+      font-size: 16px;
+    }
+
+    .display_none {
+      display: none !important;
+    }
+
+    .inline_block {
+      display: inline-block !important;
+    }
+
+    .label {
+      width: 100px;
+      vertical-align: top;
+    }
+
+    .value {
+      width: 400px;
+    }
+
+    .bold {
+      font-weight: bold;
+      font-
+    }
+
+    #app {
+      width: 520px;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    #board {
+      display: table;
+      margin: 0 auto;
+    }
+
+    .centered {
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .count {
+      font-size: 30px;
+    }
+
+    .playAgain {
+      width: 100%;
+      height: 50px;
+      font-size: 20px;
+    }
+
+    .tile {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      border-radius: 12px;
+      font-size: 0px;
+    }
+
+    .tile.on {
+      background-color: rgb(51, 191, 51);
+    }
+
+    .tile.off {
+      background-color: rgb(216, 43, 43);
+    }
+
+    .tile.on.preview {
+      /*background-color: rgb(121, 193, 121);*/
+      border-width: 5px;
+      border-color: black;
+    }
+
+    .tile.off.preview {
+      /*background-color: rgb(214, 129, 129);*/
+      border-width: 5px;
+      border-color: black;
+    }
+
+    .tile:hover {
+      border-width: 10px;
+      cursor: default;
+    }
+
+    .colorblind .tile {
+      font-size: 50px;
+    }
+
+    .row {
+      display: block;
+    }
+
+    .alert {
+      position: fixed;
+      display: table;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 99;
+      background-color: rgba(236,236,236, 0.5);
+    }
+
+    .alert .container {
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    .alert .container .content {
+      margin-left: auto;
+      margin-right: auto;
+      width: 400px;
+      height: 250px;
+      padding: 10px;
+      background-color: rgba(236,236,236, 1);
+      border: 1px solid black;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body onload="init()">
+
+  <div id="app">
+    <h1 class="centered">Color Core 2</h1>
+
+    <div>
+      <div class="inline_block label">
+        <p class="bold">How to Win:</p>
+      </div>
+      <div class="inline_block value">
+        <p>Make all the tiles on the board below match each other.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="inline_block label">
+        <p class="bold">How to Play:</p>
+      </div>
+      <div class="inline_block value">
+        <p>Click a tile to reverse its color. Beware, adjacent tiles will also change (this includes diagonals). Try to solve the puzzle in as few clicks as possible.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="inline_block label">
+        <p class="bold">Options:</p>
+      </div>
+      <div class="inline_block value">
+        <p>
+          <span>Colorblind Mode</span>
+          <input id="colorblindCheckbox" type="checkbox"
+                 onClick="toggleColorBlind(this)"/>
+        </p>
+      </div>
+    </div>
+
+
+    <div>
+      <div class="inline_block label">
+        <p class="bold">Clicks:</p>
+      </div>
+      <div class="inline_block value">
+        <p>
+          <span id="clicks">0</span>
+        </p>
+      </div>
+    </div>
+
+    <div id="board"></div>
+
+    <div id="winDialog" class="alert display_none">
+      <div class="container">
+        <div class="content centered">
+          <h1>Color Core 2</h1>
+          <h3>You win!</h3>
+          <h3>You took <span id="winClicks">0</span> clicks to solve the puzzle.</h3>
+          <button class="playAgain" onClick="reset()">Play Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var game = {};
+
+    function toggleColorBlind(checkbox) {
+      game.colorblind = ! game.colorblind;
+
+      if (game.colorblind) {
+        document.getElementById("board").classList.add("colorblind");
+      } else {
+        document.getElementById("board").classList.remove("colorblind");
+      }
+    }
+
+    function reset() {
+      location.reload();
+    }
+
+    function init() {
+      game.grid = [];
+
+      game.colorblind = false;
+
+      game.width = 5;
+      game.height = 5;
+
+      for (var j = 0; j < game.height; j++) {
+        var row = [];
+
+        var rowDisplay = document.createElement("div");
+        rowDisplay.classList.add('row');
+
+        for (var i = 0; i < game.width; i++) {
+          var tile = createTile(i, j);
+
+          row.push(parseInt(tile.innerHTML));
+          rowDisplay.appendChild(tile);
+        }
+
+        game.grid.push(row);
+
+        document.getElementById("board").appendChild(rowDisplay);
+      }
+
+      randomize();
+
+      game.clicks = 0;
+    }
+
+    function startIncrement(button) {
+      game.clicks++;
+      document.getElementById("clicks").innerHTML = game.clicks;
+
+      var x = parseInt(button.getAttribute("x"));
+      var y = parseInt(button.getAttribute("y"));
+
+      runIncrements(x, y);
+
+      checkForWin();
+    }
+
+    function runIncrements(x, y) {
+      increment(x, y);
+
+      var bLeft  = x > 0;
+      var bRight = x < game.width - 1;
+      var bUp    = y > 0;
+      var bDown  = y < game.height - 1;
+
+      if (bLeft) {
+        increment(x-1, y);
+        if (bUp) {
+          increment(x-1, y-1);
+        }
+        if (bDown) {
+          increment(x-1, y+1);
+        }
+      }
+
+      if (bRight) {
+        increment(x+1, y);
+        if (bUp) {
+          increment(x+1, y-1);
+        }
+        if (bDown) {
+          increment(x+1, y+1);
+        }
+      }
+
+      if (bUp) {
+        increment(x, y-1);
+      }
+
+      if (bDown) {
+        increment(x, y+1);
+      }
+    }
+
+    function checkForWin() {
+      var bWin = allMatch();
+
+      if (bWin) {
+        document.getElementById("winClicks").innerHTML = game.clicks;
+        document.getElementById("winDialog").classList.remove("display_none");
+      }
+    }
+
+    function allMatch() {
+      var match = game.grid[0][0];
+
+      for (var j = 0; j < game.height; j++) {
+        for (var i = 0; i < game.width; i++) {
+          if (game.grid[i][j] != match) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    function increment(x, y) {
+      var id = buildButtonId(x, y);
+
+      var button = document.getElementById(id);
+
+      var count = parseInt(button.innerHTML);
+
+      count = count ? 0 : 1;
+
+      button.innerHTML = count;
+
+      if (count) {
+        button.classList.add('on');
+        button.classList.remove('off');
+      } else {
+        button.classList.remove('on');
+        button.classList.add('off');
+      }
+
+      game.grid[x][y] = count;
+    }
+
+    function tileHovered(button) {
+      showPreview(button, true);
+    }
+
+    function tileUnhovered(button) {
+      showPreview(button, false);
+    }
+
+    function showPreview(button, value) {
+      var x = parseInt(button.getAttribute("x"));
+      var y = parseInt(button.getAttribute("y"));
+
+      var bLeft  = x > 0;
+      var bRight = x < game.width - 1;
+      var bUp    = y > 0;
+      var bDown  = y < game.height - 1;
+
+      if (bLeft) {
+        togglePreview(x-1, y, value);
+        if (bUp) {
+          togglePreview(x-1, y-1, value);
+        }
+        if (bDown) {
+          togglePreview(x-1, y+1, value);
+        }
+      }
+
+      if (bRight) {
+        togglePreview(x+1, y, value);
+        if (bUp) {
+          togglePreview(x+1, y-1, value);
+        }
+        if (bDown) {
+          togglePreview(x+1, y+1, value);
+        }
+      }
+
+      if (bUp) {
+        togglePreview(x, y-1, value);
+      }
+
+      if (bDown) {
+        togglePreview(x, y+1, value);
+      }
+    }
+
+    function togglePreview(x, y, value) {
+      var id = buildButtonId(x, y);
+
+      var button = document.getElementById(id);
+
+      if (value) {
+        button.classList.add("preview");
+      } else {
+        button.classList.remove("preview");
+      }
+    }
+
+    function createTile(x, y) {
+      var button = document.createElement("BUTTON");
+
+      var count = 0;
+
+      button.innerHTML = count;
+
+      var id = buildButtonId(x, y);
+
+      button.classList.add('tile');
+      button.classList.add('off');
+      button.setAttribute("id", buildButtonId(x, y));
+      button.setAttribute("onClick", "startIncrement(this)");
+      button.setAttribute("onmouseover", "tileHovered(this)");
+      button.setAttribute("onmouseleave", "tileUnhovered(this)");
+      button.setAttribute("x", x);
+      button.setAttribute("y", y);
+
+      return button;
+    }
+
+    function buildButtonId(x, y) {
+      return "[" + x + "," + y + "]";
+    }
+
+    function randomize() {
+      var steps = 50;
+
+      for (var n = 1; n <= steps; n++) {
+        var x = Math.floor(Math.random() * game.width);
+        var y = Math.floor(Math.random() * game.height);
+
+        runIncrements(x, y);
+      }
+    }
+  </script>
+</body>
+</html>
