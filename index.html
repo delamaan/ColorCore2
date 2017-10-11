@@ -120,16 +120,6 @@
       animation-duration: 0.3s;
     }
 
-    .tile.on.preview {
-      border-width: 5px;
-      border-color: black;
-    }
-
-    .tile.off.preview {
-      border-width: 5px;
-      border-color: black;
-    }
-
     @-webkit-keyframes turnOff {
       0% {
         background-color: rgb(51, 191, 51);
@@ -458,64 +448,6 @@
       game.grid[x][y] = count;
     }
 
-    function tileHovered(button) {
-      showPreview(button, true);
-    }
-
-    function tileUnhovered(button) {
-      showPreview(button, false);
-    }
-
-    function showPreview(button, value) {
-      var x = parseInt(button.getAttribute("x"));
-      var y = parseInt(button.getAttribute("y"));
-
-      var bLeft  = x > 0;
-      var bRight = x < game.width - 1;
-      var bUp    = y > 0;
-      var bDown  = y < game.height - 1;
-
-      if (bLeft) {
-        togglePreview(x-1, y, value);
-        if (bUp) {
-          togglePreview(x-1, y-1, value);
-        }
-        if (bDown) {
-          togglePreview(x-1, y+1, value);
-        }
-      }
-
-      if (bRight) {
-        togglePreview(x+1, y, value);
-        if (bUp) {
-          togglePreview(x+1, y-1, value);
-        }
-        if (bDown) {
-          togglePreview(x+1, y+1, value);
-        }
-      }
-
-      if (bUp) {
-        togglePreview(x, y-1, value);
-      }
-
-      if (bDown) {
-        togglePreview(x, y+1, value);
-      }
-    }
-
-    function togglePreview(x, y, value) {
-      var id = buildButtonId(x, y);
-
-      var button = document.getElementById(id);
-
-      if (value) {
-        button.classList.add("preview");
-      } else {
-        button.classList.remove("preview");
-      }
-    }
-
     function createTile(x, y) {
       var button = document.createElement("BUTTON");
 
@@ -531,11 +463,6 @@
       button.setAttribute("onClick", "startIncrement(this)");
       button.setAttribute("x", x);
       button.setAttribute("y", y);
-
-      if (! game.isMobile) {
-        button.setAttribute("onmouseover", "tileHovered(this)");
-        button.setAttribute("onmouseleave", "tileUnhovered(this)");
-      }
 
       return button;
     }
