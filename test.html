@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Page</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      color: rgb(50, 58, 50);
+      font-family: Arial;
+    }
+
+    .wrapper {
+      display: table;
+      width: 100%;
+      height: 100%;
+      min-width: 500px;
+      min-height: 800px;
+      text-align: center;
+    }
+
+    .header {
+      display: table-row;
+      height: 1px;
+      background-color: rgb(175, 202, 175);
+    }
+
+    .content {
+      display: table;
+      width: 100%;
+      height: 100%;
+      min-height: 1000px;
+      background-color: rgb(204, 234, 204);
+    }
+
+    .inline_block {
+      display: inline-block;
+    }
+
+    .center_of_parent {
+      display: table;
+      margin: 0 auto;
+    }
+
+    .table_cell {
+      display: table-cell;
+    }
+
+    .soft_padding {
+      padding: 8px 4px;
+    }
+
+    .item {
+      width: 200px;
+      margin-left: 4px;
+    }
+
+    .item:first-of-type {
+      margin-left: 0px;
+    }
+
+    .header .clickable:hover {
+      background-color: rgb(50, 58, 50);
+      color: rgb(175, 202, 175);
+    }
+
+    .content .clickable:hover {
+      background-color: rgb(50, 58, 50);
+      color: rgb(204, 234, 204);
+    }
+
+    .sidebar {
+      display: table-cell;
+      width: 200px;
+    }
+
+    .middle {
+      display: table-cell;
+      min-width: 500px;
+    }
+
+    .footer {
+      display: table-row;
+      height: 1px;
+      background-color: rgb(175, 202, 175);
+    }
+
+    .modal_container {
+      width: 200px;
+      height: 200px;
+      border-radius: 200px;
+      background-color: black;
+    }
+
+    .modal {
+      display: table-cell;
+      vertical-align: middle;
+      width: 100px;
+      height: 100px;
+      border-radius: 0px;
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="header">
+    <div class="inline_block item soft_padding clickable">
+      Home
+    </div>
+    <div class="inline_block item soft_padding clickable">
+      Games
+    </div>
+    <div class="inline_block item soft_padding clickable">
+      About
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="sidebar"></div>
+
+    <div class="middle">
+      <div class="inline_block item soft_padding clickable">Yolo</div>
+      <div class="inline_block item soft_padding clickable">Yeaaah Dude!</div>
+      <div class="center_of_parent modal_container">
+        <div class="center_of_parent modal"></div>
+      </div>
+    </div>
+
+    <div class="sidebar"></div>
+  </div>
+
+  <div class="footer">
+    <div class="inline_block soft_padding">Color Core Games</div>
+    <div class="inline_block soft_padding">Created by Andrew Delamar</div>
+  </div>
+</div>
+
+</body>
+</html>
